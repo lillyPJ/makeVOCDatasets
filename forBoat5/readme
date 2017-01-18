@@ -1,0 +1,6 @@
+1. 把gt准备成ICDAR2011的txt格式: getSeperateTxtGt.py
+2. 把gt转成xml格式: getXmlGt.py
+3. 得到文件名列表，存成txt格式：getImgNameList.py
+4. 存成VOC格式的文件夹：changeToVOC.py
+5. 增加ssd需要的几个文件：addToSSD.py
+

@@ -1,0 +1,148 @@
+---------------------------------------------boat5-------------------------------------------
+1. 把gt准备成ICDAR2011的txt格式: getSeperateTxtGt.py
+2. 把gt转成xml格式: getXmlGt.py
+gt = open(src_txt_dir + img + '.txt').read().splitlines()  # change the name of gt file
+xml_file.write('    <folder>boat</folder>\n')        # change the dataset name
+xml_file.write('        <name>boat</name>\n')      # change the label name
+3. 得到文件名列表，存成txt格式：getImgNameList.py
+4. 存成VOC格式的文件夹：changeToVOC.py
+5. 增加ssd需要的几个文件：addToSSD.py
+6. 复制prefiles/create_data.sh, labelmap.prototxt到boat5_SSD目录下，并修改：
+【prefiles/create_data.sh】
+dataset_name="boat5"
+
+【labelmap.prototxt】
+item {
+  name: "none_of_the_above"
+  label: 0
+  display_name: "background"
+}
+item {
+  name: "text"
+  label: 1
+  display_name: "text"
+}
+
+7. 把boat5_VOC目录下所有文件拷到/home/lili/datasets/VOC/VOCdevkit/boat5/下
+8. 把boat5_SSD目录下所有文件拷到/home/lili/codes/ssd/caffe-ssd/data/boat5目录下
+9. 复制/home/lili/codes/ssd/caffe-ssd/examples/ssd/ssd_pascal.py文件，重命名为：ssd_pascal_boat5.py，修改以下代码：
+# The database file for training data. Created by data/boat5/create_data.sh
+train_data = "examples/boat5/boat5_train_lmdb"
+# The database file for testing data. Created by data/boat5/create_data.sh
+test_data = "examples/boat5/boat5_val_lmdb"
+
+# The name of the model. Modify it if you want.
+model_name = "VGG_boat5_{}".format(job_name)
+
+# Directory which stores the model .prototxt file.
+save_dir = "models/VGGNet/boat5/{}".format(job_name)
+# Directory which stores the snapshot of models.
+snapshot_dir = "models/VGGNet/boat5/{}".format(job_name)
+# Directory which stores the job script and log file.
+job_dir = "jobs/VGGNet/boat5/{}".format(job_name)
+# Directory which stores the detection results.
+output_result_dir = "{}/data/VOCdevkit/results/boat5/{}/Main".format(os.environ['HOME'], job_name)
+
+# model definition files.
+train_net_file = "{}/train.prototxt".format(save_dir)
+test_net_file = "{}/val.prototxt".format(save_dir)
+
+# Stores the test image names and sizes. Created by data/boat5/create_list.sh
+name_size_file = "data/boat5/val_name_size.txt"
+
+# Stores LabelMapItem.
+label_map_file = "data/boat5/labelmap.prototxt"
+
+# MultiBoxLoss parameters.
+num_classes = 2
+
+batch_size = 8
+
+num_test_image = 50
+
+10. 运行/home/lili/codes/ssd/caffe-ssd/data/boat5/create_data.sh生成lmdb的训练集
+11. 在caffe-ssd目录下运行python examples/ssd/ssd_pascal_boat5.py进行训练
+12. 训练完成后，运行examples/ssd_detect_boat.ipynb进行单张测试，运行ssd_detect_boat.py进行多张测试
+
+
+
+---------------------------------------ICDAR2011---------------------------------------
+1. 修改getXmlGt.py，修改其中库的名字和类的名字
+gt = open(src_txt_dir + img + '.txt').read().splitlines()  # change the name of gt file
+xml_file.write('    <folder>boat</folder>\n')        # change the dataset name
+xml_file.write('        <name>boat</name>\n')      # change the label name
+
+2. 复制prefilesExample目录，重命名为prefiles，修改该目录下的以下几个文件：
+
+------create_data.sh------
+dataset_name="ICDAR2011"
+
+------labelmap.prototxt------
+item {
+  name: "none_of_the_above"
+  label: 0
+  display_name: "background"
+}
+item {
+  name: "text"
+  label: 1
+  display_name: "text"
+}
+
+------ssd_pascal.py------
+库的名字（所有直接进行替换），样本数
+
+
+------ssd_detect.ipynb（单张图像测试），ssd_detect.py（多张图像测试）------
+labelmap_file = 'data/boat5/labelmap.prototxt'
+model_def = 'models/VGGNet/boat5/SSD_300x300/deploy.prototxt'
+model_weights = 'models/VGGNet/boat5/SSD_300x300/VGG_boat5_SSD_300x300_iter_12000.caffemodel'
+py文件：imglist = glob.glob('/home/lili/codes/makeVocDatasets/datasets/boat5/img/val/*.jpg')
+ipynb文件：image = caffe.io.load_image('/home/lili/codes/makeVocDatasets/datasets/boat4/img/val/0420004.jpg')
+
+3. 运行main_prepareVOC.py文件把数据库制作成VOC格式
+4. 运行main_prepareSSD以及准备ssd需要的几个文件
+5. 运行main_moveDataset.py，进行数据库迁移（复制到ssd的data目录和examples目录，以及datasets/VOC/VOCdevkit目录下）
+6. 进入/home/lili/codes/ssd/caffe-ssd/data/ICDAR2011目录，运行create_data.sh生成lmdb的训练集
+7. 在caffe-ssd目录下运行python examples/ssd/ssd_pascal_ICDAR2011.py进行训练
+8. 训练完成后，运行examples/ssd_detect_ICDAR2011.ipynb进行单张测试，运行ssd_detect_ICDAR2011.py进行多张测试
+
+---------------------------------------ICDAR2013---------------------------------------
+1. 修改getXmlGt.py，修改如下
+spt = img_each_label.split(' ')                    # ICDAR2011-' ', ICDAR2013-' '
+
+2. 复制prefilesExample目录，重命名为prefiles，修改该目录下的以下几个文件：
+
+------create_data.sh------
+dataset_name="ICDAR2013"
+
+------labelmap.prototxt------
+item {
+  name: "none_of_the_above"
+  label: 0
+  display_name: "background"
+}
+item {
+  name: "text"
+  label: 1
+  display_name: "text"
+}
+
+------ssd_pascal.py------
+库的名字（所有直接进行替换），样本数
+
+
+------ssd_detect.ipynb（单张图像测试），ssd_detect.py（多张图像测试）------
+labelmap_file = 'data/ICDAR2013/labelmap.prototxt'
+model_def = 'models/VGGNet/ICDAR2013/SSD_300x300/deploy.prototxt'
+model_weights = 'models/VGGNet/ICDAR2013/SSD_300x300/VGG_boat5_SSD_300x300_iter_12000.caffemodel'
+py文件：imglist = glob.glob('/home/lili/codes/makeVocDatasets/datasets/ICDAR2013/img/val/*.jpg')
+ipynb文件：image = caffe.io.load_image('/home/lili/codes/makeVocDatasets/datasets/ICDAR2013/img/val/0420004.jpg')
+
+3. 运行main_prepareVOC.py文件把数据库制作成VOC格式
+4. 运行main_prepareSSD以及准备ssd需要的几个文件
+5. 运行main_moveDataset.py，进行数据库迁移（复制到ssd的data目录和examples目录，以及datasets/VOC/VOCdevkit目录下）
+6. 进入/home/lili/codes/ssd/caffe-ssd/data/ICDAR2013目录，运行create_data.sh生成lmdb的训练集
+7. 在caffe-ssd目录下运行python examples/ssd/ssd_pascal_ICDAR2013.py进行训练
+8. 训练完成后，运行examples/ssd_detect_ICDAR2013.ipynb进行单张测试，运行ssd_detect_ICDAR2011.py进行多张测试
+
