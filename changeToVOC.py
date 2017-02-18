@@ -26,8 +26,10 @@ to:
    --JPEGImages
      --XXX.jpg
 '''
-import os
+import glob
+import shutil
 from makeNewDir import *
+
 
 def changeToVOC(dataset):
 
@@ -36,25 +38,29 @@ def changeToVOC(dataset):
 
 
     #Annotations
-    destdir = dataset_voc + 'Annotations'
-    srcdir = dataset + 'gt_xml/word'
-    makedirs(os.path.dirname(destdir))
-    os.symlink(srcdir, destdir)
+    destdir = dataset_voc + 'Annotations/'
+    makedirs(destdir)
+    srcdirs = glob.glob(dataset + 'gt_xml/*')
+    for eachdir in srcdirs:
+        for filename in glob.glob(os.path.join(eachdir, '*.*')):
+            shutil.copy(filename, destdir)
 
     #ImageSets
-    destdir = dataset_voc + 'ImageSets/Main'
-    srcdir = dataset + 'gt_total_imgname_txt'
-    makedirs(os.path.dirname(destdir))
-    os.symlink(srcdir, destdir)
+    destdir = dataset_voc + 'ImageSets/Main/'
+    makedirs(destdir)
+    srcdirs = glob.glob(dataset + 'gt_total_imgname_txt/*')
+    for filename in srcdirs:
+        shutil.copy(filename, destdir)
 
     #JPEGImages
-    destdir = dataset_voc + 'JPEGImages'
-    srcdir = dataset + 'img'
-    makedirs(os.path.dirname(destdir))
-    os.symlink(srcdir, destdir)
-
+    destdir = dataset_voc + 'JPEGImages/'
+    makedirs(destdir)
+    srcdirs = glob.glob(dataset + 'img/*')
+    for eachdir in srcdirs:
+        for filename in glob.glob(os.path.join(eachdir, '*.*')):
+            shutil.copy(filename, destdir)
 
 if __name__ == '__main__':
     # paras
-    basedir = '/home/lili/datasets/VGG/'
-    changeToVOC(basedir)
+    dataset = '/home/lili/codes/makeVocDatasets/datasets/ICDAR2011/'
+    changeToVOC(dataset)

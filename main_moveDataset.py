@@ -3,20 +3,18 @@
 '''
 import os
 import shutil
-from makeNewDir import *
 import glob
+from makeNewDir import *
 
 # paras
-basedir = '/home/lili/datasets/'
-dataset = 'VGG'
+basedir = '/home/lili/codes/makeVocDatasets/datasets/'
+dataset = 'coco'
 
 # (rename)move ICDAR2011_VOC/* to /home/lili/datasets/VOC/VOCdevkit/
 src_dir = basedir + dataset + '_VOC'
 dest_dir = '/home/lili/datasets/VOC/VOCdevkit/' + dataset
-os.remove(dest_dir)
 makedirs(os.path.dirname(dest_dir))
 os.symlink(src_dir, dest_dir)
-
 
 # move ICDAR2011_SSD/* to /home/lili/codes/ssd/caffe-ssd/data/ICDAR2011/
 src_dir = basedir + dataset + '_SSD'
@@ -32,12 +30,12 @@ for each in filelist:
 shutil.copy('./prefiles/create_data.sh', dest_dir)
 shutil.copy('./prefiles/labelmap.prototxt', dest_dir)
 
-# (rename)move prefiles/ssd_pascal.py to /home/lili/codes/ssd/caffe-ssd/examples/ssd/
-dest_file = '/home/lili/codes/ssd/caffe-ssd/examples/ssd/ssd_pascal_' + dataset + '.py'
-shutil.copy('./prefiles/ssd_pascal.py', dest_file)
-
-# (rename)move prefiles/ssd_detect.py, ssd_detect.ipynb to /home/lili/codes/ssd/caffe-ssd/examples
-dest_file1 = '/home/lili/codes/ssd/caffe-ssd/examples/ssd_detect_' + dataset + '.py'
-dest_file2 = '/home/lili/codes/ssd/caffe-ssd/examples/ssd_detect_' + dataset + '.ipynb'
-shutil.copy('./prefiles/ssd_detect.py', dest_file1)
-shutil.copy('./prefiles/ssd_detect.ipynb', dest_file2)
+# # (rename)move prefiles/ssd_pascal.py to /home/lili/codes/ssd/caffe-ssd/examples/ssd/
+# dest_file = '/home/lili/codes/ssd/caffe-ssd/examples/ssd/ssd_pascal_' + dataset + '.py'
+# shutil.copy('./prefiles/ssd_pascal.py', dest_file)
+#
+# # (rename)move prefiles/ssd_detect.py, ssd_detect.ipynb to /home/lili/codes/ssd/caffe-ssd/examples
+# dest_file1 = '/home/lili/codes/ssd/caffe-ssd/examples/ssd_detect_' + dataset + '.py'
+# dest_file2 = '/home/lili/codes/ssd/caffe-ssd/examples/ssd_detect_' + dataset + '.ipynb'
+# shutil.copy('./prefiles/ssd_detect.py', dest_file1)
+# shutil.copy('./prefiles/ssd_detect.ipynb', dest_file2)

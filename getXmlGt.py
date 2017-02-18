@@ -10,6 +10,7 @@ import os
 import glob
 from PIL import Image
 from makeNewDir import *
+import re
 
 def getXmlFromTxtGt(src_img_dir, src_txt_dir, tgt_xml_dir):
     # get img_basenames(100.jpg) and img_names (100)
@@ -27,15 +28,15 @@ def getXmlFromTxtGt(src_img_dir, src_txt_dir, tgt_xml_dir):
         # open image file and the crospronding txt file
         im = Image.open((src_img_dir + img + '.jpg'))
         width, height = im.size
-        gt = open(src_txt_dir  + img + '.txt').read().splitlines()  # change the name of gt file
+        gt = open(src_txt_dir + img + '.txt').read().splitlines()  # change the name of gt file
 
         #write into xml file
         makedirs(tgt_xml_dir)
-        base_dir_name = os.path.basename(src_img_dir[:-1])
+
         xml_file = open((tgt_xml_dir + img + '.xml'), 'w')
         xml_file.write('<annotation>\n')
         xml_file.write('    <folder>text</folder>\n')        # change the dataset name
-        xml_file.write('    <filename>' + base_dir_name + '/' + str(img) + '.jpg' + '</filename>\n')
+        xml_file.write('    <filename>' + str(img) + '.jpg' + '</filename>\n')
         xml_file.write('    <size>\n')
         xml_file.write('        <width>' + str(width) + '</width>\n')
         xml_file.write('        <height>' + str(height) + '</height>\n')
@@ -44,7 +45,8 @@ def getXmlFromTxtGt(src_img_dir, src_txt_dir, tgt_xml_dir):
 
         # write the region of text on xml file
         for img_each_label in gt:
-            spt = img_each_label.split(', ')                    # ICDAR2011-' ', ICDAR2013-' '
+            #spt = img_each_label.split(',')                    # ICDAR2011-' ', ICDAR2013-''
+            spt = re.split('[,]? ', img_each_label)
             xml_file.write('    <object>\n')
             xml_file.write('        <name>text</name>\n')      # change the label name
             xml_file.write('        <pose>Unspecified</pose>\n')
@@ -60,15 +62,14 @@ def getXmlFromTxtGt(src_img_dir, src_txt_dir, tgt_xml_dir):
         xml_file.write('</annotation>')
 
 if __name__ == '__main__':
-    basedir = '/home/lili/datasets/VGG/'
-    # 1. get xml_gt
+    # paras: image dir and txt dir
+    basedir = '/home/lili/codes/makeVocDatasets/datasets/ICDAR2011/'
+    # precess all dirs(train, val, test, tranval)
     dirs = glob.glob(basedir + 'img/*')
-    for i, each in enumerate(dirs):
-        if not (i%10):
-            print i
+    for each in dirs:
         eachdir = os.path.basename(each)
         src_img_dir = basedir + 'img/' + eachdir + '/'
-        src_txt_dir = basedir + 'gt_txt/word/' + eachdir + '/'
-        tgt_xml_dir = basedir + 'gt_xml/word/' + eachdir + '/'
+        src_txt_dir = basedir + 'gt_txt/' + eachdir + '/'
+        tgt_xml_dir = basedir + 'gt_xml/' + eachdir + '/'
         getXmlFromTxtGt(src_img_dir, src_txt_dir, tgt_xml_dir)
 

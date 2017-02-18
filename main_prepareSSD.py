@@ -85,10 +85,11 @@ def addToSSD(dataset):
                 img = Image.open(img_dir + eachimg + '.jpg')
                 if len(img.getbands()) < 3:
                     print img_dir + eachimg + '.jpg:' + str(len(img.getbands()))
+                    continue
                 width, height = img.size
                 f.write('%s %d %d\n' % (eachimg, height, width))
 
 if __name__ == '__main__':
     # paras
-    dataset = '/home/lili/datasets/VGG/'
+    dataset = '/home/lili/codes/makeVocDatasets/datasets/coco/'
     addToSSD(dataset)
